@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="quartz_tables" author="rfelgent">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="QRTZ_JOB_DETAILS"/>
+            </not>
+        </preConditions>
+        <sqlFile encoding="utf8"
+                 path="sql/quartz_h2.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+</databaseChangeLog>

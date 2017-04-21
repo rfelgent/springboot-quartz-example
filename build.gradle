@@ -1,0 +1,53 @@
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+build {
+    version             = "0.1"
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+jar {
+    archiveName 'scheduler.jar'
+}
+
+bootRun {
+    String activeProfile =  System.getProperty('spring.profiles.active', 'local')
+    systemProperties['spring.profiles.active'] = activeProfile
+}
+
+configurations {
+    compile.exclude module: "spring-boot-starter-tomcat"
+    compile.exclude module: 'commons-logging'
+    //transitive dependency via spring-boot-starter-jdbc; must be excluded otherwise hikari is not auto-configured
+    compile.exclude module: 'tomcat-jdbc'
+}
+
+dependencies {
+    compile 'org.quartz-scheduler:quartz:2.2.3'
+    /////////
+    //every dependency that does not have a specified version is taken from Spring Boot's BOM!
+    /////////
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-jetty'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework:spring-context-support'                //required for programmatic scheduler creation!
+    compile 'org.liquibase:liquibase-core'
+    runtime 'com.h2database:h2'
+    runtime 'com.zaxxer:HikariCP'
+}

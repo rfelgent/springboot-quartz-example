@@ -1,0 +1,50 @@
+server:
+  port:                                                               10333
+
+#using ".xml" instad of ".yml" based Liquibase changelogs
+liquibase.change-log:                                                 classpath:db/changelog/db.changelog-master.xml
+#--------
+# Spring jdbc
+#--------
+spring.datasource:
+  #using in memory database for non production environments
+  url:                                                                jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL;DB_CLOSE_ON_EXIT=FALSE
+  username:                                                           sa
+  password:
+  driver-class-name:                                                  org.h2.Driver
+  # Spring Boot tries to be smart with its autconfigure feature when configuring an in-memory database.
+  # I switch off any related database feature, as I use Liquibase as data base schema versioning tool!
+  initialize:                                                         false
+  continueOnError:                                                    false
+  data:                                                               does_not_exist.sql
+  schema:                                                             does_not_exist.sql
+  #hikari is the database connection pool manager
+  type:                                                               com.zaxxer.hikari.HikariDataSource
+  hikari:
+    connection-test-query:                                            SELECT 1
+    minimum-idle:                                                     2
+    maximum-pool-size:                                                30
+    pool-name:                                                        Scheduler_pool
+#--------
+#JPA
+#--------
+spring.jpa:
+  # Spring Boot tries to be smart with its autconfigure feature when configuring an in-memory database.
+  # I switch off any related database feature, as I use Liquibase as data base schema versioning tool!
+  generate-ddl:                                                       false
+  show-sql:                                                           true
+  #h2 in memory datbase is mysql compatible, so let's use the dialect of production target environment !
+  database-platform:                                                  org.hibernate.dialect.MySQL5InnoDBDialect
+  hibernate:
+    ddl-auto:                                                         none
+    hbm2ddl.auto:                                                     none
+    #ensures uppercase table names in the generated SQL
+    naming.physical-strategy:                                         org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    format_sql:                                                       true
+    type:                                                             trace
+#--------
+#H2 console
+#--------
+spring.h2.console:
+  enabled:                                                            true
+  path:                                                               /h2-console
